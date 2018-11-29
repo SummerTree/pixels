@@ -17,7 +17,18 @@ public class ThresholdPIX: PIXSingleEffect, PIXofaKind {
     // MARK: - Public Properties
     
     public var threshold: CGFloat = 0.5 { didSet { setNeedsRender() } }
-    public var smoothness: CGFloat = 0 { didSet { setNeedsRender() } }
+    public var smooth: Bool = true { didSet { setNeedsRender() } }
+    var _smoothness: CGFloat = 0
+    public var smoothness: CGFloat {
+        set {
+            _smoothness = newValue
+            setNeedsRender()
+        }
+        get {
+            guard smooth else { return 0.0 }
+            return max(_smoothness, 1.0 / pow(2.0, CGFloat(Pixels.main.colorBits.rawValue)))
+        }
+    }
     
     // MARK: - Property Helpers
     enum EdgeCodingKeys: String, CodingKey {
@@ -50,6 +61,7 @@ public extension PIXOut {
     
     func _threshold(at threshold: CGFloat = 0.5) -> ThresholdPIX {
         let thresholdPix = ThresholdPIX()
+        thresholdPix.name = ":threshold:"
         thresholdPix.inPix = self as? PIX & PIXOut
         thresholdPix.threshold = threshold
         return thresholdPix

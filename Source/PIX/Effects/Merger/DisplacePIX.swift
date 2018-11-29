@@ -57,12 +57,21 @@ public class DisplacePIX: PIXMergerEffect, PIXofaKind {
 
 public extension PIXOut {
     
-    func _displace(pix: PIX & PIXOut, distance: CGFloat) -> DisplacePIX {
+    func _displace(with pix: PIX & PIXOut, distance: CGFloat) -> DisplacePIX {
         let displacePix = DisplacePIX()
+        displacePix.name = ":displace:"
         displacePix.inPixA = self as? PIX & PIXOut
         displacePix.inPixB = pix
         displacePix.distance = distance
         return displacePix
     }
+    
+//    func _displaceNoise(distance: CGFloat, octaves: Int) -> DisplacePIX {
+//        let noisePix = NoisePIX(res: (self as? PIX & PIXOut)?.resolution ?? ._128)
+//        noisePix.name = "displaceNoise:noise"
+//        noisePix.colored = true
+//        noisePix.octaves = octaves
+//        return _displace(with: noisePix, distance: distance)
+//    }
     
 }

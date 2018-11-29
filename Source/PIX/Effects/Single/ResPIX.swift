@@ -46,7 +46,7 @@ public class ResPIX: PIXSingleEffect, PIXofaKind {
         let container = try decoder.container(keyedBy: ResCodingKeys.self)
         resMultiplier = try container.decode(CGFloat.self, forKey: .resMultiplier)
         inheritInRes = try container.decode(Bool.self, forKey: .inheritInRes)
-        fillMode = try container.decode(FillMode.self, forKey: .fillMode)
+//        fillMode = try container.decode(FillMode.self, forKey: .fillMode)
     }
 
     override public func encode(to encoder: Encoder) throws {
@@ -54,7 +54,7 @@ public class ResPIX: PIXSingleEffect, PIXofaKind {
         var container = encoder.container(keyedBy: ResCodingKeys.self)
         try container.encode(resMultiplier, forKey: .resMultiplier)
         try container.encode(inheritInRes, forKey: .inheritInRes)
-        try container.encode(fillMode, forKey: .fillMode)
+//        try container.encode(fillMode, forKey: .fillMode)
     }
 
 }
@@ -63,12 +63,14 @@ public extension PIXOut {
     
     func _reRes(to res: PIX.Res) -> ResPIX {
         let resPix = ResPIX(res: res)
+        resPix.name = "reRes:res"
         resPix.inPix = self as? PIX & PIXOut
         return resPix
     }
     
     func _reRes(by resMultiplier: CGFloat) -> ResPIX {
         let resPix = ResPIX(res: ._128)
+        resPix.name = "reRes:res"
         resPix.inPix = self as? PIX & PIXOut
         resPix.inheritInRes = true
         resPix.resMultiplier = resMultiplier

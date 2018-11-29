@@ -100,6 +100,11 @@ public class CameraPIX: PIXResource, PIXofaKind {
     public var camera: Camera = .front { didSet { setupCamera() } }
     #endif
     
+    
+    #if os(macOS)
+    public var autoDetect: Bool = true
+    #endif
+    
     // MARK: - Property Helpers
     
     enum CodingKeys: String, CodingKey {
@@ -119,6 +124,20 @@ public class CameraPIX: PIXResource, PIXofaKind {
     public override init() {
         super.init()
         setupCamera()
+        
+        #if os(macOS)
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVCaptureDeviceWasConnected, object: nil, queue: nil) { (notif) -> Void in
+            self.camAttatched(device: notif.object! as! AVCaptureDevice)
+        }
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.AVCaptureDeviceWasDisconnected, object: nil, queue: nil) { (notif) -> Void in
+            self.camDeattatched(device: notif.object! as! AVCaptureDevice)
+        }
+        #endif
+        
+    }
+    
+    deinit {
+        helper!.stop()
     }
     
     // MARK: - JSON
@@ -145,23 +164,36 @@ public class CameraPIX: PIXResource, PIXofaKind {
     
     func requestAccess(gotAccess: @escaping () -> ()) {
         if #available(OSX 10.14, *) {
-            AVCaptureDevice.requestAccess(for: .video) { accessGranted in
-                if accessGranted {
-                    gotAccess()
-                } else {
-                    self.pixels.log(pix: self, .warning, .resource, "Camera Access Not Granted.")
+            switch AVCaptureDevice.authorizationStatus(for: .video) {
+            case .authorized:
+                gotAccess()
+                access = true
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: .video) { accessGranted in
+                    if accessGranted {
+                        gotAccess()
+                    } else {
+                        self.pixels.log(pix: self, .warning, .resource, "Camera access not granted.")
+                    }
+                    self.access = accessGranted
                 }
-                self.access = accessGranted
+            case .denied:
+                access = false
+                pixels.log(pix: self, .warning, .resource, "Camera access denied.")
+            case .restricted:
+                access = false
+                pixels.log(pix: self, .warning, .resource, "Camera access restricted.")
             }
         } else {
             gotAccess()
-            self.access = true
+            access = true
         }
     }
     
     // MARK: Setup
     
-    func setupCamera() {
+    // FIXME: make private
+    public func setupCamera() {
         if !access {
             requestAccess {
                 DispatchQueue.main.async {
@@ -191,9 +223,23 @@ public class CameraPIX: PIXResource, PIXofaKind {
         })
     }
     
-    deinit {
-        helper!.stop()
+    // MARK: - Camera Attatchment
+    
+    #if os(macOS)
+    func camAttatched(device: AVCaptureDevice) {
+        guard autoDetect else { return }
+        self.pixels.log(pix: self, .info, .resource, "Camera Attatched.")
+        setupCamera()
     }
+    #endif
+    
+    #if os(macOS)
+    func camDeattatched(device: AVCaptureDevice) {
+        guard autoDetect else { return }
+        self.pixels.log(pix: self, .info, .resource, "Camera Deattatched.")
+        setupCamera()
+    }
+    #endif
     
 }
 

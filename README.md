@@ -1,7 +1,7 @@
 <img src="https://github.com/anton-hexagons/pixels/raw/master/Assets/Logo/pixels_logo_1k_bg.png" width="128"/>
 
 # Pixels
-a Live Graphics Framework for iOS<br>
+a Live Graphics Framework for iOS and macOS (beta)<br>
 powered by Metal
 
 <b>ContentPIXs</b>:
@@ -58,7 +58,11 @@ Info:
 [High Bit Mode](#high-bit-mode) -
 [Apps](#apps)
 
-Under development. More effects and pod coming soon!
+Under development.
+
+--- 
+
+Note that Pixels dose not have simulator support. Metal for iOS can only run on a physical device.
 
 ## Docs
 Classes, Delegates and Properties of:<br>
@@ -66,6 +70,15 @@ Classes, Delegates and Properties of:<br>
 [PIX](https://github.com/anton-hexagons/pixels/blob/master/DOCS.md#pix) - 
 [PIXContent](https://github.com/anton-hexagons/pixels/blob/master/DOCS.md#pixcontent-pix-pixout) - 
 [PIXEffect](https://github.com/anton-hexagons/pixels/blob/master/DOCS.md#pixeffect-pix-pixin-pixout)
+
+## Installing
+
+Pod coming soon!
+
+To contribute or test, follow these three steps:
+1. Drag `Pixels.xcodeproj` in to your Xcode project.
+2. Drag `Pixels.framework` under Products to your projects embedded binaries section of the general tab of your app target.
+3. Drag `PixelsShaders.metallib` under Products (from the nested `PixelsShaders.xcodeproj`) to your projects copy bundle resources under build phases of your app target.
 
 ## Tutorial
 
@@ -161,12 +174,12 @@ Note that compared to native UIKit views the vertical axis is flipped.
 A quick and convenient way to blend PIXs<br>
 These are the supported `PIX.BlendingMode` operators:
 
-| `&` | `!&` | `+` | `-` | `*` | `**` | `!**` | `%` | `<>` | `><` | `--` |
+| `&` | `!&` | `+` | `-` | `*` | `**` | `***` | `%` | `<>` | `><` | `--` |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | .over | .under | .add | .subtract | .multiply | .power | .gamma | .difference | .minimum | .maximum | .subtractWithAlpha |
 
 ```swift
-let blendPix = (CameraPIX() !** NoisePIX(res: .fullHD(.portrait))) * CirclePIX(res: .fullHD(.portrait))
+let blendPix = (CameraPIX() *** NoisePIX(res: .fullHD(.portrait))) * CirclePIX(res: .fullHD(.portrait))
 ```
 
 The default global blend operator fill mode is `.aspectFit`, change it like this:<br>
@@ -299,10 +312,6 @@ let metalPix = MetalPIX(res: ._1080p, code:
 )
 lumUniform.value = 0.5
 ~~~~
-
---- 
-
-Note that Pixels dose not have simulator support. Metal for iOS can only run on a physical device.
 
 ---
 

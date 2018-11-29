@@ -8,10 +8,11 @@
 
 infix operator --
 infix operator **
-infix operator !**
+infix operator ***
 infix operator !&
 infix operator <>
 infix operator ><
+infix operator !
 
 import CoreGraphics
 
@@ -53,12 +54,12 @@ public extension PIX {
             case .under: return "!&"
             case .add: return "+"
             case .multiply: return "*"
-            case .difference: return "%"
+            case .difference: return "!"
             case .subtractWithAlpha: return "--"
             case .subtract: return "-"
             case .maximum: return "><"
             case .minimum: return "<>"
-            case .gamma: return "!**"
+            case .gamma: return "***"
             case .power: return "**"
             case .divide: return "/"
             }
@@ -117,13 +118,13 @@ public extension PIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .power)
     }
     
-    public static func !**(lhs: PIX, rhs: PIX & PIXOut) -> BlendPIX {
+    public static func ***(lhs: PIX, rhs: PIX & PIXOut) -> BlendPIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .gamma)
     }
-    public static func !**(lhs: PIX, rhs: CGFloat) -> BlendPIX {
+    public static func ***(lhs: PIX, rhs: CGFloat) -> BlendPIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .gamma)
     }
-    public static func !**(lhs: PIX, rhs: Color) -> BlendPIX {
+    public static func ***(lhs: PIX, rhs: Color) -> BlendPIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .gamma)
     }
     
@@ -151,15 +152,15 @@ public extension PIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .under)
     }
     
-    public static func %(lhs: PIX, rhs: PIX & PIXOut) -> BlendPIX {
+    public static func !(lhs: PIX, rhs: PIX & PIXOut) -> BlendPIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .difference)
     }
-    public static func %(lhs: CGFloat, rhs: PIX) -> BlendPIX { return rhs % lhs }
-    public static func %(lhs: PIX, rhs: CGFloat) -> BlendPIX {
+    public static func !(lhs: CGFloat, rhs: PIX) -> BlendPIX { return rhs ! lhs }
+    public static func !(lhs: PIX, rhs: CGFloat) -> BlendPIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .difference)
     }
-    public static func %(lhs: Color, rhs: PIX) -> BlendPIX { return rhs % lhs }
-    public static func %(lhs: PIX, rhs: Color) -> BlendPIX {
+    public static func !(lhs: Color, rhs: PIX) -> BlendPIX { return rhs ! lhs }
+    public static func !(lhs: PIX, rhs: Color) -> BlendPIX {
         return blendOperators.blend(lhs, rhs, blendingMode: .difference)
     }
     
